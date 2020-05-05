@@ -131,23 +131,24 @@ export function stackAnimatedStyles (index, animatedValue, carouselProps, cardOf
 
     cardOffset = !cardOffset && cardOffset !== 0 ? 18 : cardOffset;
 
-    const getTranslateFromScale = (index, scale) => {
-        const centerFactor = 1 / scale * index;
+    const getTranslateFromScale = (cardIndex, scale) => {
+        const centerFactor = 1 / scale * cardIndex;
         const centeredPosition = -Math.round(sizeRef * centerFactor);
         const edgeAlignment = Math.round((sizeRef - (sizeRef * scale)) / 2);
-        const offset = Math.round(cardOffset * Math.abs(index) / scale);
+        const offset = Math.round(cardOffset * Math.abs(cardIndex) / scale);
 
         return IS_ANDROID ?
             centeredPosition - edgeAlignment - offset :
             centeredPosition + edgeAlignment + offset;
     };
 
+    const opacityOutputRange = carouselProps.inactiveSlideOpacity === 1 ? [1, 1, 1, 0] : [1, 0.75, 0.5, 0];
+
     return IS_ANDROID ? {
-        zIndex: carouselProps.data.length - index,
         // elevation: carouselProps.data.length - index, // fix zIndex bug visually, but not from a logic point of view
         opacity: animatedValue.interpolate({
             inputRange: [-3, -2, -1, 0],
-            outputRange: [0, 0.5, 0.75, 1],
+            outputRange: opacityOutputRange.reverse(),
             extrapolate: 'clamp'
         }),
         transform: [{
@@ -173,7 +174,7 @@ export function stackAnimatedStyles (index, animatedValue, carouselProps, cardOf
         zIndex: carouselProps.data.length - index,
         opacity: animatedValue.interpolate({
             inputRange: [0, 1, 2, 3],
-            outputRange: [1, 0.75, 0.5, 0],
+            outputRange: opacityOutputRange,
             extrapolate: 'clamp'
         }),
         transform: [{
@@ -225,17 +226,16 @@ export function tinderAnimatedStyles (index, animatedValue, carouselProps, cardO
 
     cardOffset = !cardOffset && cardOffset !== 0 ? 9 : cardOffset;
 
-    const getMainTranslateFromScale = (index, scale) => {
-        const centerFactor = 1 / scale * index;
+    const getMainTranslateFromScale = (cardIndex, scale) => {
+        const centerFactor = 1 / scale * cardIndex;
         return -Math.round(sizeRef * centerFactor);
     };
 
-    const getSecondaryTranslateFromScale = (index, scale) => {
-        return Math.round(cardOffset * Math.abs(index) / scale);
+    const getSecondaryTranslateFromScale = (cardIndex, scale) => {
+        return Math.round(cardOffset * Math.abs(cardIndex) / scale);
     };
 
     return IS_ANDROID ? {
-        zIndex: carouselProps.data.length - index,
         // elevation: carouselProps.data.length - index, // fix zIndex bug visually, but not from a logic point of view
         opacity: animatedValue.interpolate({
             inputRange: [-3, -2, -1, 0, 1],

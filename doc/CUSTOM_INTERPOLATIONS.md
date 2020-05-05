@@ -138,7 +138,7 @@ function scrollInterpolator (index, carouselProps) {
 
 This is where the fun begins!
 
-The first trick is **to ensure that the active item will always sit on top of the next ones**. By default, an item with a higher index will also have a higher `zIndex`. To counteract this, you can use the following:
+The first trick is **to ensure that the active item will always sit on top of the next ones**. By default, an item with a higher index will also have a higher `zIndex`. To counteract this, you can use the following. :warning: **Currently, this can lead to swipe/click events being missed!** See [this issue](https://github.com/archriss/react-native-snap-carousel/issues/262) for more info.
 
 ```javascript
 {
@@ -285,7 +285,7 @@ With custom interpolations, what you're most likely to experience is... nothing!
 
 Two solutions:
 - **Play with the following `FlatList` props** until you find something that suits your needs (or not): `initialNumToRender`, `maxToRenderPerBatch`, `windowSize` and `updateCellsBatchingPeriod`.
-- **Set `useScrollView` to `true`**. End of the bugs. : warning: This is a trade-off: you will have to forget about the performance optimizations that *are supposed* to come with `FlatList`, but your sanity will be preserved. We've chosen this solution for the 'stack' and 'tinder' layouts. **Bear in mind that this solution is not suited for large data sets.**
+- **Set `useScrollView` to `true` and/or `removeClippedSubviews` to `false`**. End of the bugs. :warning: This is a trade-off: you will have to forget about the performance optimizations that *are supposed* to come with `FlatList`, but your sanity will be preserved. We've chosen this solution for the 'stack' and 'tinder' layouts. **Bear in mind that this solution is not suited for large data sets.**
 
 ### Others
 

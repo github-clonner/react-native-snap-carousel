@@ -35,19 +35,21 @@ Prop | Description | Type | Default
 `callbackOffsetMargin` | Scroll events might not be triggered often enough to get a precise measure and, therefore, to provide a reliable callback. This usually is an Android issue, which might be linked to the version of React Native you're using (see ["Unreliable callbacks"](https://github.com/archriss/react-native-snap-carousel/blob/master/doc/KNOWN_ISSUES.md#unreliable-callbacks)). To work around this, you can define a small margin that will increase the "sweet spot"'s width. The default value should cover most cases, but **you will want to increase it if you experience missed callbacks**. | Number | `5`
 `enableMomentum` | See [momentum](https://github.com/archriss/react-native-snap-carousel/blob/master/doc/TIPS_AND_TRICKS.md#momentum) | Boolean | `false`
 `enableSnap` | If enabled, releasing the touch will scroll to the center of the nearest/active item | Boolean | `true`
-`firstItem` | Index of the first item to display | Number | `0`
+`firstItem` | Index of the first item to display. :warning: **Make sure to use inherited props [`getItemLayout`](https://facebook.github.io/react-native/docs/flatlist#getitemlayout) & [`initialScrollIndex`](https://facebook.github.io/react-native/docs/flatlist#initialscrollindex) if the prop doesn't seem to work**. | Number | `0`
 `hasParallaxImages` | Whether the carousel contains `<ParallaxImage />` components or not. Required for specific data to be passed to children. | Boolean | `false`
+`lockScrollTimeoutDuration` | This prop works in conjunction with `lockScrollWhileSnapping`. When scroll is locked, a timer is created in order to release the scroll if something goes wrong with the regular callback handling. **Normally, you shouldn't have to use this prop.** | Number | `1000`
 `lockScrollWhileSnapping` | Prevent the user from swiping again while the carousel is snapping to a position. This prevents miscellaneous minor issues (inadvertently tapping an item while scrolling, stopping the scrolling animation if the carousel is tapped in the middle of a snap, clunky behavior on Android when short snapping quickly in opposite directions). The only drawback is that enabling the prop hinders the ability to swipe quickly between items as a little pause between swipes is needed. **Note that the prop won't have any effect if `enableMomentum` is set to `true`, since it would otherwise impede the natural and expected behavior.** | Boolean | `false`
+`scrollEnabled` | When `false`, the view cannot be scrolled via touch interaction ([inherited prop](https://github.com/archriss/react-native-snap-carousel/blob/master/doc/PROPS_METHODS_AND_GETTERS.md#inherited-props)) | Boolean | `true`
 `shouldOptimizeUpdates` | Whether to implement a `shouldComponentUpdate` strategy to minimize updates | Boolean | `true`
 `swipeThreshold` | Delta x when swiping to trigger the snap | Number | `20`
-`useScrollView` | Whether to use a `ScrollView` component instead of the default `FlatList` one. The advantages are to avoid rendering issues that can arise with `FlatList` and to provide compatibility with React Native pre- `0.43`. The major drawback is that you won't benefit from any of `FlatList`'s advanced optimizations. **We recommend activating it only with a small set of slides and to test performance thoroughly in production mode.** | Boolean | `false`
+`useScrollView` | Whether to use a `ScrollView` component instead of the default `FlatList` one. The advantages are to avoid rendering issues that can arise with `FlatList` and to provide compatibility with React Native pre- `0.43`. The major drawbacks are that you won't benefit from any of `FlatList`'s advanced optimizations and that you won't be able to use either `VirtualizedList` or `FlatList`'s specific props. **We recommend activating it only with a small set of slides and to test performance thoroughly in production mode.** Since version `3.7.6`, this prop also accepts a custom scroll component (see #498 for more info). | Boolean | `false` for `default` layout, `true` for `stack` and `tinder` layouts
 `vertical` | Layout slides vertically instead of horizontally | Boolean | `false`
 
 ### Loop
 
 Prop | Description | Type | Default
 ------ | ------ | ------ | ------
-`loop` | Enable infinite loop mode. Note that it won't work if `enableSnap` has been set to `false`. | Boolean | `false`
+`loop` | Enable infinite loop mode. **:warning: It won't work if `enableSnap` has been set to `false`.** | Boolean | `false`
 `loopClonesPerSide` | Number of clones to append to each side of the original items. **When swiping very quickly**, the user will eventually need to pause for a quick second before the scroll is repositioned (this occurs when the end of the set is reached). By increasing this number, the user will be able to scroll more slides before having to stop; but you'll also load more items in memory. This is a trade-off between optimal user experience and performance. | Number | `3`
 
 ### Autoplay
@@ -55,7 +57,7 @@ Prop | Description | Type | Default
 Prop | Description | Type | Default
 ------ | ------ | ------ | ------
 `autoplay` | Trigger autoplay on mount. If you enable autoplay, we recommend you to set `enableMomentum` to `false` (default) and `lockScrollWhileSnapping` to `true`; this will enhance user experience a bit. | Boolean | `false`
-`autoplayDelay` | Delay before enabling autoplay on startup & after releasing the touch | Number | `5000`
+`autoplayDelay` | Delay before enabling autoplay on startup & after releasing the touch | Number | `1000`
 `autoplayInterval` | Delay in ms until navigating to the next item | Number |  `3000`
 
 ### Style and animation
@@ -70,7 +72,7 @@ Prop | Description | Type | Default
 `inactiveSlideOpacity` | Value of the opacity effect applied to inactive slides | Number | `0.7`
 `inactiveSlideScale` | Value of the 'scale' transform applied to inactive slides | Number | `0.9`
 `inactiveSlideShift` | Value of the 'translate' transform applied to inactive slides (see [#204](https://github.com/archriss/react-native-snap-carousel/issues/204) or [the "custom interpolations" doc](https://github.com/archriss/react-native-snap-carousel/blob/master/doc/CUSTOM_INTERPOLATIONS.md) for an example usage). This prop will have no effect with layouts others than the default one. | Number | `0`
-`layout` | Define the way items are rendered and animated. Possible values are `'default'`, `'stack'` and `'tinder'`. See [this](https://github.com/archriss/react-native-snap-carousel#layouts-and-custom-interpolations) for more info and visual examples. **WARNING: setting this prop to either `'stack'` or `'tinder'` will activate `useScrollView` [to prevent rendering bugs with `FlatList`](https://github.com/archriss/react-native-snap-carousel/blob/master/doc/CUSTOM_INTERPOLATIONS.md#caveats). Therefore, those layouts will probably not be suited if you have a large data set.** | String | `'default'`
+`layout` | Define the way items are rendered and animated. Possible values are `'default'`, `'stack'` and `'tinder'`. See [this](https://github.com/archriss/react-native-snap-carousel#layouts-and-custom-interpolations) for more info and visual examples. :warning: **Setting this prop to either `'stack'` or `'tinder'` will activate `useScrollView` [to prevent rendering bugs with `FlatList`](https://github.com/archriss/react-native-snap-carousel/blob/master/doc/CUSTOM_INTERPOLATIONS.md#caveats). Therefore, those layouts won't be suited if you have a large data set since all items are going to be rendered upfront.** | String | `'default'`
 `layoutCardOffset` | Use to increase or decrease the default card offset in both 'stack' and 'tinder' layouts. | Number | `18` for the 'stack' layout, `9` for the 'tinder' one
 `scrollInterpolator` | Used to define custom interpolations. See [the dedicated doc](https://github.com/archriss/react-native-snap-carousel/blob/master/doc/CUSTOM_INTERPOLATIONS.md#summary). | Function | `undefined`
 `slideInterpolatedStyle` | Used to define custom interpolations. See [the dedicated doc](https://github.com/archriss/react-native-snap-carousel/blob/master/doc/CUSTOM_INTERPOLATIONS.md#summary). | Function | `undefined`
@@ -82,7 +84,8 @@ Prop | Description | Type | Default
 ------ | ------ | ------ | ------
 `onLayout(event)` | Exposed `View` callback; invoked on mount and layout changes | Function | `undefined`
 `onScroll(event)` | Exposed `ScrollView` callback; fired while scrolling | Function | `undefined`
-`onSnapToItem(slideIndex)` | Callback fired when navigating to an item | Function | `undefined`
+`onBeforeSnapToItem(slideIndex)` | Callback fired when the new active item has been determined, before snapping to it | Function | `undefined`
+`onSnapToItem(slideIndex)` | Callback fired after snapping to an item | Function | `undefined`
 
 ### Inherited props
 
@@ -126,12 +129,12 @@ onPress={() => { this.refs.carousel.snapToNext(); }}
 
 Method | Description
 ------ | ------
-`startAutoplay (instantly = false)` | Start the autoplay manually
-`stopAutoplay ()` | Stop the autoplay manually
-`snapToItem (index, animated = true)` | Snap to an item manually
-`snapToNext (animated = true)` | Snap to next item manually
-`snapToPrev (animated = true)` | Snap to previous item manually
-`triggerRenderingHack (offset)` | Call this when needed to work around [a random `FlatList` bug](https://github.com/facebook/react-native/issues/1831) that keeps content hidden until the carousel is scrolled (see [#238](https://github.com/archriss/react-native-snap-carousel/issues/238). Note that the `offset` parameter is not required and will default to either `1` or `-1` depending on the current scroll position.
+`startAutoplay (instantly = false)` | Start the autoplay programmatically
+`stopAutoplay ()` | Stop the autoplay programmatically
+`snapToItem (index, animated = true, fireCallback = true)` | Snap to an item programmatically
+`snapToNext (animated = true, fireCallback = true)` | Snap to next item programmatically
+`snapToPrev (animated = true, fireCallback = true)` | Snap to previous item programmatically
+`triggerRenderingHack (offset)` | Call this when needed to work around [a random `FlatList` bug](https://github.com/facebook/react-native/issues/1831) that keeps content hidden until the carousel is scrolled (see [#238](https://github.com/archriss/react-native-snap-carousel/issues/238)). Note that the `offset` parameter is not required and will default to either `1` or `-1` depending on the current scroll position.
 
 ## Getters
 
